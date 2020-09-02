@@ -1,24 +1,38 @@
+import {getToken,setToken} from '@/utils/auth'
+import {login} from '@/api/user'
+
 const user = {
-    state: { 
-        text: 'hello'
+    namespaced: true,
+    state: {
+        token:getToken()
     },
     mutations: {
-        addText (state, txt) {
-            // 这里的 `state` 对象是模块的局部状态
-            state.text += txt
+        SET_TOKEN:(state,token)=>{
+            state.token=token
         }
     },
-    
+
     actions: {
-        setText ({ commit }) {
-            commit('addText', ' world')
+        userLogin({commit},userInfo){
+            // console.log('userInfo: ', userInfo);
+            return new Promise((resolve,reject)=>{
+                login(userInfo).then(resp=>{
+                    // console.log('resp: ', resp);
+                    if(resp.success){
+                        setToken(resp.data.token)
+                        commit('SET_TOKEN',resp.data.token)
+                        resolve(resp.data)
+                    }
+                    reject(resp.reason)
+                }).catch(err=>{
+                    console.log('userLogin err: ', err);
+                    reject(err)
+                })
+            })
         }
     },
  
     getters: {
-        getText (state) {
-            return state.text + '!'
-        }
     }
 }
  

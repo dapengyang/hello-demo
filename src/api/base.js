@@ -1,59 +1,55 @@
 // base.js
 // axios请求方法封装
 import axios from 'axios'
-import qs from 'qs'
 
-export const post=(url,body,extend={isJson:true})=>{
-	let defaultConfig={
+axios.defaults.timeout = 10000 // 请求超时时间
+
+export const $_get = (url, param) => {
+	let defaultConfig = {
 		url,
-		method:'POST',
-		data:extend.isJson?body:qs.stringify(body)
+		methos: 'GET',
+		params: param
 	}
-	let config={...defaultConfig,...extend}
-	return axios.post(config).then(res=>{
-		return res.data
-	}).catch(err=>{
-		return Promise.reject(err)
-	})
+	return axios.request(defaultConfig)
 }
 
-export const get=(url,param)=>{
-	let defaultConfig={
+export const $_post = (url, body) => {
+	let config = {
 		url,
-		methos:'GET',
-		params:param
+		method: 'POST',
+		data: body,
+		transformRequest: [function (data) {
+			let ret = ''
+			for (let it in data) {
+				ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+			}
+			return ret
+		}]
 	}
-	return axios.get(defaultConfig).then(res=>{
-		return res.data
-	}).catch(err=>{
-		return Promise.reject(err)
-	})
+	return axios.request(config)
 }
 
-export const put=(url,body,extend={isJson:true})=>{
-	let defaultConfig={
+export const $_put = (url, body) => {
+	let config = {
 		url,
-		methos:'PUT',
-		data:body
+		methos: 'PUT',
+		data: body,
+		transformRequest: [function (data) {
+			let ret = ''
+			for (let it in data) {
+				ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+			}
+			return ret
+		}]
 	}
-	let config={...defaultConfig,...extend}
-	return axios.put(config).then(res=>{
-		return res.data
-	}).catch(err=>{
-		return Promise.reject(err)
-	})
+	return axios.request(config)
 }
 
-export const _delete=(url,param,extend={isJson:true})=>{
-	let defaultConfig={
+export const $_delete = (url, param) => {
+	let config = {
 		url,
-		methos:'DELETE',
-		params:param
+		methos: 'DELETE',
+		params: param
 	}
-	let config={...defaultConfig,...extend}
-	return axios.delete(config).then(res=>{
-		return res.data
-	}).catch(err=>{
-		return Promise.reject(err)
-	})
+	return axios.request(config)
 }

@@ -13,10 +13,6 @@ import '@smallwei/avue/lib/index.css'
 
 Vue.config.productionTip = false
 
-import { install as Axios } from './api/install'
-Vue.use(Axios)
-
-
 Vue.use(ElementUI);
 Vue.use(Avue);
 
@@ -40,6 +36,7 @@ axios.interceptors.response.use(response => {
 	return response;
 }, (error) => {
 	// 跳转到登录页面
+	let me=this
 	// console.debug('axios error', error.response, error.response.data, error.response.data.error);
 	let status = error.status || error.response && (error.response.status || error.response.data.status || error.response
 		.data.error.status) || undefined;
@@ -55,7 +52,7 @@ axios.interceptors.response.use(response => {
 			});
 			break;
 		case 403:
-			this.$message({
+			me.$message({
 				message: '用户信息已过期，请重新登录',
 				type: 'error'
 			});
@@ -72,7 +69,7 @@ axios.interceptors.response.use(response => {
 			}, 1000);
 			break;
 		case 404:
-			this.$message({
+			me.$message({
 				message: '网络链接错误',
 				type: 'error'
 			});
